@@ -173,24 +173,19 @@ namespace Parcial_2
         {
             try
             {
-                // Verificar que haya un instituto y un prestador seleccionados
                 if (dgvInstitutos.CurrentRow == null)
                     throw new Exception("Debe seleccionar un instituto.");
                 if (dgvPrestadores.CurrentRow == null)
                     throw new Exception("Debe seleccionar un prestador.");
 
-                // Obtener las instancias seleccionadas desde las grillas
                 var inst = (Instituto)dgvInstitutos.CurrentRow.DataBoundItem;
                 var prest = (Prestador)dgvPrestadores.CurrentRow.DataBoundItem;
 
-                // Verificar si ya está asignado
                 if (inst.Prestadores.Contains(prest))
                     throw new Exception("El prestador ya está asignado a este instituto.");
 
-                // Asignar usando el método del Gestor
                 gestor.AsignarPrestador(inst, prest);
 
-                // Actualizar las grillas que muestran las relaciones
                 dgvPrestadoresInstituto.DataSource = null;
                 dgvPrestadoresInstituto.DataSource = inst.Prestadores.ToList();
 
@@ -214,7 +209,6 @@ namespace Parcial_2
 
                 var inst = (Instituto)dgvInstitutos.CurrentRow.DataBoundItem;
 
-                // Actualizar propiedades desde los TextBox
                 inst.Nombre = txtInstitutoNombre.Text;
                 inst.Telefono = txtInstitutoTelefono.Text;
                 inst.Direccion = txtInstitutoDireccion.Text;
@@ -239,7 +233,7 @@ namespace Parcial_2
 
                 var inst = (Instituto)dgvInstitutos.CurrentRow.DataBoundItem;
 
-                // Verificar si tiene pagos pendientes
+                // Verificamos si tiene pago pendientes
                 bool tienePagosPendientes = gestor.Pagos.Any(p => p.Instituto == inst && !p.Cancelado);
                 if (tienePagosPendientes)
                     throw new Exception("No se puede eliminar el instituto porque tiene pagos pendientes.");
@@ -253,7 +247,7 @@ namespace Parcial_2
                 {
                     gestor.Institutos.Remove(inst);
 
-                    // Quitar relaciones en prestadores
+                    // Sacamos la relaciones entre los prestadores
                     foreach (var prest in gestor.Prestadores)
                         prest.Institutos.Remove(inst);
 
@@ -299,7 +293,7 @@ namespace Parcial_2
 
                 var prest = (Prestador)dgvPrestadores.CurrentRow.DataBoundItem;
 
-                // No eliminar si tiene institutos asignados
+                // No eliminar si tiene institutos vinculado
                 if (prest.Institutos.Any())
                     throw new Exception("No se puede eliminar el prestador porque tiene institutos asignados.");
 
